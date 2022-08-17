@@ -1,60 +1,50 @@
-<body cz-shortcut-listen="true">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">Simple Airbnb</a>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <div class="ms-auto flex">
-          <form class="flex my-2 my-lg-0">
-            <input class="form-control me-2" name="query" type="search"   placeholder="Search" aria-label="Search" value>
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          </form>
-          <a class="btn btn-outline-primary my-2 my-sm-0 ms-2" href="/flats/new">Add flat</a>
-        </div>
-      </div>
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-12">
+      <h1>All our Flats</h1>
     </div>
-  </nav>
-  <div class="container mt-3">
-    <div class="row">
-      <div class="col-12">
-        <h1>All our flats</h1>
-      </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <% if @query %>
+        <p>You searched for <strong><%= @query %></strong>. We found <%= @flats.count %> flats out of our <%= Flat.count %> on our website.</p>
+      <% else %>
+        <p>All <%= Flat.count %> flats.</p>
+      <% end %>
     </div>
-    <div class="row">
-      <div class="col">
-        <p>All 6 flats.</p>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="flat-card">
-        <div class="flat-card-image" style="background-image: url('https://images.unsplash.com/photo-1444419988131-046ed4e5ffd6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80')">
-        </div>
-        <div class="flat-card-content">
-          <div class="flat-card-title">
-            <h4>Cute flat</h4>
-          </div>
-          <p>Zurich</p>
-          <div class="flex">
-            <div class="flex align-items-center">
-              <i class="fa-solid fa-people-line"></i><span>2</span>
-            </div>
-            <div class="flex align-items-center ms-3">
-              <i class="fa-solid fa-euro-sign"></i><span>500</span>
-            </div>
-          </div>
-        </div>
-        <div class="flat-card-actions">
-          <a href="/flats/6460">More Info</a>
-          <a class="ms-3 text-warning" href="/flats/6460/edit">Edit</a>
-          <a data-turbo-method="delete" data-turbo-confirm="Are you sure" class="ms-3 text-danger" href="/flats/6460">Remove</a>
-        </div>
-      </div>
-    </div>
-</body>
-<div class="container mt-2">
-  <h1>YELP!</h1>
-  <div class="card list-inline">
+  </div>
+
+  <div class="row">
     <% @flats.each do |flat| %>
-      <li class="list-group-item m-2"> <%= link_to flat.name, flat_path(flat), class: "text-decoration-none" %></li>
+      <div class="col-md-4">
+        <div class="flat-card">
+          <div class="flat-card-content">
+            <div class="flat-card-title">
+              <h4><%= flat.name %></h4>
+            </div>
+            <p><%= flat.address %></p>
+            <div class="flex">
+              <div class="flex align-items-center">
+                <i class="fa-solid fa-people-line"></i>
+                <span><%= flat.number_of_guests %></span>
+              </div>
+              <div class="flex align-items-center ms-3">
+                <i class="fa-solid fa-euro-sign"></i>
+                <span><%= flat.price_per_night %></span>
+              </div>
+            </div>
+          </div>
+          <div class="flat-card-actions">
+            <%= link_to "More info", flat_path(flat) %>
+            <%= link_to "Edit", edit_flat_path(flat), class: "ms-3 text-warning" %>
+            <%= link_to "Remove", flat_path(flat),
+                data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
+                class: "ms-3 text-danger"
+            %>
+          </div>
+        </div>
+      </div>
     <% end %>
   </div>
 </div>

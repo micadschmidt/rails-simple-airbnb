@@ -1,11 +1,15 @@
 class FlatsController < ApplicationController
-  before_action :set_flat, only: %w[show edit update]
-  def index
-    @flats = Flat.all
-  end
+  before_action :set_flat, only: [:show, :edit, :update, :destroy]
 
-  def show
-    # @restaurant = Restaurant.find(params[:id])
+  def index
+    if params[:query].present?
+      @query = params[:query]
+      @flats = Flat.where("name LIKE ?", "%#{params[:query]}%")
+      # Preventing SQL Injection and Database error for
+      # unknown characters
+    else
+      @flats = Flat.all
+    end
   end
 
   def new
@@ -14,23 +18,30 @@ class FlatsController < ApplicationController
 
   def create
     @flat = Flat.new(flat_params)
-    @flat.save
-    redirect_to flats_path
-    # if @restaurant.save
-    #   redirect_to restaurants_path
-    # else
-    #   render :new, status: :unprocessable_entity
-    # end
+    if @flat.save
+      redirect_to flats_path
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def show
   end
 
   def edit
-    # @restaurant = Restaurant.find(params[:id])
   end
 
   def update
-    # @restaurant = Restaurant.find(params[:id])
-    @flat.update(flat_params)
-    redirect_to flat_path(@flat)
+    if @flat.update(flat_params)
+      redirect_to flat_path(@flat)
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @flat.destroy
+    redirect_to flats_path, status: :see_other
   end
 
   private
@@ -40,6 +51,6 @@ class FlatsController < ApplicationController
   end
 
   def flat_params
-    params.require(:flat).permit(:name, :address, :description, :price_per_night, :number_of_guests)
+    params.require(:flat).permit(:name, :address, :description, :price_per_night, :number_of_guests, :picture_url)
   end
 end
